@@ -24,7 +24,7 @@ hs_err_pid*
 replay_pid*
 /.gradle
 /.vscode
-/.wpilib
+#/.wpilib
 /build
 simgui.json
 simgui-window.json
