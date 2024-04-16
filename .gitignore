@@ -26,3 +26,7 @@ replay_pid*
 /.vscode
 /.wpilib
 /build
+simgui.json
+simgui-window.json
+simgui-ds.json
+networktables.json
