@@ -4,11 +4,23 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkLowLevel;
+
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class BumperIntakeSubsystem extends SubsystemBase {
+
+  MotorController m_bumperIntake = new CANSparkFlex(Constants.OperatorConstants.kBumperIntakePort,CANSparkLowLevel.MotorType.kBrushless);
+
   /** Creates a new BumperIntakeSubsystem. */
   public BumperIntakeSubsystem() {}
+
+  public void setVelocity(double velocity) {
+    m_bumperIntake.set(velocity);
+  }
 
   @Override
   public void periodic() {

@@ -4,11 +4,24 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkLowLevel;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class ShooterIntakeSubsystem extends SubsystemBase {
+
+  MotorController m_intakeMotor = new CANSparkFlex(Constants.OperatorConstants.kIntakePort, CANSparkLowLevel.MotorType.kBrushless);
+
   /** Creates a new ShooterIntakeSubsysten. */
   public ShooterIntakeSubsystem() {}
+
+  public void setVelocity(double velocity) {
+    m_intakeMotor.set(velocity);
+  }
 
   @Override
   public void periodic() {
