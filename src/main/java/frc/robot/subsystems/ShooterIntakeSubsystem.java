@@ -8,11 +8,14 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ShooterIntakeSubsystem extends SubsystemBase {
+
+DigitalInput intakeSwitch = new DigitalInput(Constants.OperatorConstants.kIntakeSwitchPort);
 
   MotorController m_intakeMotor = new CANSparkFlex(Constants.OperatorConstants.kIntakePort, CANSparkLowLevel.MotorType.kBrushless);
 
@@ -22,6 +25,8 @@ public class ShooterIntakeSubsystem extends SubsystemBase {
   public void setVelocity(double velocity) {
     m_intakeMotor.set(velocity);
   }
+
+  public boolean getIntakeSensorState() { return !intakeSwitch.get(); };
 
   @Override
   public void periodic() {
