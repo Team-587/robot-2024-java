@@ -19,6 +19,8 @@ public final class Constants {
     public static final int kIntakePort = 2;
     public static final int kBumperIntakePort = 3;
     public static final int kIntakeSwitchPort = 5;
+    public static final int kRightClimberMotorPort = 6;
+    public static final int kLeftClimberMotorPort = 7;
 
     public static final int kLEDSideLength = 26;
     public static final int kLEDBackLength = 36;

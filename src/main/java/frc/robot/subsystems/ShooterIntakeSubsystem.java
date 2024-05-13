@@ -15,7 +15,18 @@ import frc.robot.Constants;
 
 public class ShooterIntakeSubsystem extends SubsystemBase {
 
-DigitalInput intakeSwitch = new DigitalInput(Constants.OperatorConstants.kIntakeSwitchPort);
+  static final double ShortShootVelocity = 4800.00;
+  static final double FeedShootVelocity = 6000.00;
+  static final double LongShootVelocity = 5200.00;
+  static final double AmpShootVelocity = 3500.00;
+  static final double TrapShootVelocity = 900.00;
+  static final double StopShootVelocity = 0.0;
+
+  static final double intakeVelocity = 0.45;
+  static final double groundIntakeVelocity = 0.55;
+  static final double intakeShootVelocity = 1.00;
+
+  DigitalInput intakeSwitch = new DigitalInput(Constants.OperatorConstants.kIntakeSwitchPort);
 
   MotorController m_intakeMotor = new CANSparkFlex(Constants.OperatorConstants.kIntakePort, CANSparkLowLevel.MotorType.kBrushless);
 
