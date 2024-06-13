@@ -18,13 +18,17 @@ public final class Constants {
     public static final int kShooterPort = 1;
     public static final int kIntakePort = 2;
     public static final int kBumperIntakePort = 3;
+    public static final int kLEDPort = 4;
     public static final int kIntakeSwitchPort = 5;
     public static final int kRightClimberMotorPort = 6;
     public static final int kLeftClimberMotorPort = 7;
+    public static final int kElavatorMotorPort = 8;
+    public static final int kElbowAMotorPort = 9;
+    public static final int kElbowBMotorPort = 10;
 
     public static final int kLEDSideLength = 26;
     public static final int kLEDBackLength = 36;
     public static final int kLEDTotalLength = kLEDSideLength + kLEDSideLength + kLEDBackLength;
-    public static final int kLEDPort = 4;
+    
   }
 }
