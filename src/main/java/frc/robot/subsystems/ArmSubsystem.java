@@ -10,13 +10,16 @@ import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 //Code first, think later o7
@@ -76,10 +79,10 @@ public class ArmSubsystem extends SubsystemBase {
    m_ElbowAMotor = new CANSparkMax(Constants.OperatorConstants.kElbowAMotorPort, MotorType.kBrushless);
    m_ElbowBMotor = new CANSparkMax(Constants.OperatorConstants.kElbowBMotorPort, MotorType.kBrushless);
 
-   m_ElevatorPIDController = m_ElavatorMotor.getPIDController();
+   m_ElevatorPIDController = m_ElevatorMotor.getPIDController();
    m_ElbowAnglePIDController = m_ElbowAMotor.getPIDController();
 
-   m_ElevatorAbsoluteEncoder = m_ElavatorMotor.getAbsoluteEncoder();
+   m_ElevatorAbsoluteEncoder = m_ElevatorMotor.getAbsoluteEncoder();
    m_ElbowAbsoluteEncoder = m_ElbowAMotor.getAbsoluteEncoder();
 
    m_ElevatorHeight = 0.6;
@@ -87,8 +90,8 @@ public class ArmSubsystem extends SubsystemBase {
    m_CurElevatorHeight = 0.0;
    m_CurElbowAngle = 0.0;
 
-   m_ElevatorAbsoluteEncoder.setPositionConversionFactor(Constants.OperatorConstants.kElevatorPIDPosConversionFact);
-   m_ElevatorAbsoluteEncoder.setVelocityConversionFactor(Constants.OperatorConstants.kElevatorPIDPosConversionFact / 60.0);
+   m_ElevatorAbsoluteEncoder.setPositionConversionFactor(10.2);
+   m_ElevatorAbsoluteEncoder.setVelocityConversionFactor(10.2 / 60.0);
 
    m_ElevatorPIDController.setFeedbackDevice(m_ElevatorAbsoluteEncoder);
    m_ElevatorPIDController.setPositionPIDWrappingEnabled(false);
@@ -102,17 +105,137 @@ public class ArmSubsystem extends SubsystemBase {
    m_ElevatorMotor.setInverted(true);
    //m_ElevatorMotor.SetOpenLoopRampRate(0.5);
    m_ElevatorMotor.setSmartCurrentLimit(60);
-   m_ElevatorMotor.setSoftLimit(SoftLimitDirection.kForward, 8.3);
-   m_ElevatorMotor.setSoftLimit(SoftLimitDirection.kReverse, 0.4);
+   m_ElevatorMotor.setSoftLimit(SoftLimitDirection.kForward, (float) 8.3);
+   m_ElevatorMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) 0.4);
    m_ElevatorMotor.setIdleMode(IdleMode.kBrake);
+
+
+   m_ElbowAbsoluteEncoder.setPositionConversionFactor(360);
+   m_ElbowAbsoluteEncoder.setVelocityConversionFactor((360)/60.0);
+
+   m_ElbowAnglePIDController.setFeedbackDevice(m_ElbowAbsoluteEncoder);
+   m_ElbowAnglePIDController.setPositionPIDWrappingEnabled(true);
+   m_ElbowAnglePIDController.setPositionPIDWrappingMinInput(0);
+   m_ElbowAnglePIDController.setPositionPIDWrappingMaxInput(360);
+   m_ElbowAnglePIDController.setP(elbowP);
+   m_ElbowAnglePIDController.setI(elbowI);
+   m_ElbowAnglePIDController.setD(elbowD);
+   m_ElbowAnglePIDController.setFF(0);
+   m_ElbowAnglePIDController.setOutputRange(-1.0, 1.0);
+
+
+   m_ElbowAMotor.setOpenLoopRampRate(0.5);
+   m_ElbowAMotor.setSmartCurrentLimit(60);
+   m_ElbowAMotor.setSoftLimit(SoftLimitDirection.kForward, (float) ElbowAngleMax);
+   m_ElbowAMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) ElbowAngleMin);
+   m_ElbowAMotor.setIdleMode(IdleMode.kBrake);
+   m_ElbowAMotor.setInverted(true);
+
+   m_ElbowBMotor.follow(m_ElbowAMotor);
+   //m_ElbowBMotor.setInverted(false);
+   m_ElbowBMotor.setOpenLoopRampRate(0.5);
+   m_ElbowBMotor.setSmartCurrentLimit(60);
+   m_ElbowBMotor.setSoftLimit(SoftLimitDirection.kForward, (float) ElbowAngleMax);
+   m_ElbowBMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) ElbowAngleMin);
+
+   elbowPID.setP(elbowP);
+   elbowPID.setI(elbowI);
+   elbowPID.setD(elbowD);
+   SmartDashboard.putData("elbowPID", elbowPID);
+   elevatorPID.setP(elevatorP);
+   elevatorPID.setI(elevatorI);
+   elevatorPID.setD(elevatorD);
+   SmartDashboard.putData("elevatorPID", elevatorPID);
+   m_ElevatorMotor.burnFlash();
   }
 
-  void ArmPosition(double angle, double height) {}
+  void ArmPosition(double angle, double height) 
+  {
+    if (height > ElevatorMax) height = ElevatorMax;
+    if (height < ElevatorMin) height = ElevatorMin;
+    m_ElevatorHeight = height;
+
+    if (angle > ElbowAngleMax) angle = ElbowAngleMax;
+    if (angle < ElbowAngleMin) angle = ElbowAngleMin;
+    m_ElbowAngle = angle;
+
+    System.out.println(" Repositioning Arm");
+    System.out.println(" Change Arm Angle");
+  }
+
+  void GetArmPos(double angle, double height) {
+    angle = m_CurElbowAngle;
+    height = m_CurElevatorHeight;
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-  }
+
+    XboxController m_codriverController = new XboxController(Constants.OperatorConstants.kCoDriverControllerPort);
+    if(m_codriverController.getBackButton()){
+      
+      double coLeftY = m_codriverController.getLeftY();
+      if(coLeftY > -0.1 && coLeftY < 0.1){
+        coLeftY = 0;
+      }
+      double coRightY = m_codriverController.getRightY();
+      if(coRightY > -0.1 && coRightY < 0.1) {
+        coRightY = 0;
+      }
+
+      m_ElbowAngle = m_ElbowAngle + coLeftY*4.0;
+      if (m_ElbowAngle > ElbowAngleMax) m_ElbowAngle = ElbowAngleMax;
+      if (m_ElbowAngle < ElbowAngleMin) m_ElbowAngle = ElbowAngleMin;
+
+      if (coRightY < 0) coRightY = 0;
+      m_ElevatorHeight = m_ElevatorHeight + coRightY*0.5;
+      if (m_ElevatorHeight > m_ElevatorHeight) m_ElevatorHeight = ElevatorMax;
+      if(m_ElevatorHeight < m_ElevatorHeight) m_ElevatorHeight = ElevatorMin;
+    }
+
+    if(elevatorP != elevatorPID.getP() || elevatorI != elevatorPID.getI() || elevatorD != elevatorPID.getD()) {
+      elevatorP = elevatorPID.getP();
+      elevatorI = elevatorPID.getI();
+      elevatorD = elevatorPID.getD();
+
+      elevatorPID.setP(elevatorP);
+      elevatorPID.setI(elevatorI);
+      elevatorPID.setD(elevatorD);
+    }
+
+    if(elbowP != elbowPID.getP() || elbowI != elbowPID.getI() || elbowD != elbowPID.getD()) {
+      elbowP = elbowPID.getP();
+      elbowI = elbowPID.getI();
+      elbowD = elbowPID.getD();
+
+      m_ElbowAnglePIDController.setP(elbowP);
+      m_ElbowAnglePIDController.setI(elbowI);
+      m_ElbowAnglePIDController.setD(elbowD);
+    }
+
+    double ElevatorAbsoluteEncoderValue = m_ElevatorAbsoluteEncoder.getPosition();
+    double ElbowAbsoluteEncoderValue = m_ElbowAbsoluteEncoder.getPosition();
+
+    m_CurElevatorHeight = ElevatorAbsoluteEncoderValue;
+    m_CurElbowAngle = ElbowAbsoluteEncoderValue;
+
+
+    SmartDashboard.putNumber("Cur ElbowAngle", ElbowAbsoluteEncoderValue);
+    SmartDashboard.putNumber("Set Elbow Angle", m_ElbowAngle);
+    SmartDashboard.putNumber("Cur Elev Height", ElevatorAbsoluteEncoderValue);
+    SmartDashboard.putNumber("Set Elev Height", m_ElevatorHeight);
+
+
+    boolean CurElevatorLong = ElevatorAbsoluteEncoderValue >= ElevatorMaxSafe;
+    boolean CurElbowHigh = ElbowAbsoluteEncoderValue >= ElbowAngleMaxSafe;
+    boolean DesElevatorLong = m_ElevatorHeight >= ElevatorMaxSafe;
+    boolean DesElbowHigh = m_ElbowAngle >= ElbowAngleMaxSafe;
+
+
+    m_ElbowAnglePIDController.setReference(m_ElbowAngle, ControlType.kPosition);
+    m_ElevatorPIDController.setReference(m_ElevatorHeight, ControlType.kPosition);
+  } 
 
   
 
