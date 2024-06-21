@@ -33,7 +33,7 @@ public class ShooterIntakeSubsystem extends SubsystemBase {
   /** Creates a new ShooterIntakeSubsysten. */
   public ShooterIntakeSubsystem() {}
 
-  public void setVelocity(double velocity) {
+  public void setIntakeVelocity(double velocity) {
     m_intakeMotor.set(velocity);
   }
 

@@ -15,6 +15,7 @@ package frc.robot;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kCoDriverControllerPort = 1;
     public static final int kShooterPort = 1;
     public static final int kIntakePort = 2;
     public static final int kBumperIntakePort = 3;
@@ -29,6 +30,17 @@ public final class Constants {
     public static final int kLEDSideLength = 26;
     public static final int kLEDBackLength = 36;
     public static final int kLEDTotalLength = kLEDSideLength + kLEDSideLength + kLEDBackLength;
+
+    public static final double ShortShootVelocity = 4800.00;
+    public static final double FeedShootVelocity = 6000.00;
+    public static final double LongShootVelocity = 5200.00;
+    public static final double AmpShootVelocity = 3500.00;
+    public static final double TrapShootVelocity = 900.00;
+    public static final double StopShootVelocity = 0.0;
+
+    public static final double intakeVelocity = 0.45;
+    public static final double groundIntakeVelocity = 0.55;
+    public static final double intakeShootVelocity = 1.00;
     
   }
 }

@@ -5,19 +5,23 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ShooterIntakeSubsystem;
+import frc.robot.Constants;
 
 public class ShooterCommand extends Command {
-  private final ShooterSubsystem m_shooterSubsystem;
+  private final ShooterIntakeSubsystem m_shooterIntakeSubsystem;
   /** Creates a new ShooterCommand. */
-  public ShooterCommand(ShooterSubsystem shooterSubsystem) {
+  public ShooterCommand(ShooterIntakeSubsystem shooterIntakeSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_shooterSubsystem = shooterSubsystem;
-  }
+    m_shooterIntakeSubsystem = shooterIntakeSubsystem;
+      addRequirements(m_shooterIntakeSubsystem);
+    }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_shooterIntakeSubsystem.setIntakeVelocity(Constants.OperatorConstants.intakeShootVelocity);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -25,7 +29,9 @@ public class ShooterCommand extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_shooterIntakeSubsystem.setIntakeVelocity(0);
+  }
 
   // Returns true when the command should end.
   @Override

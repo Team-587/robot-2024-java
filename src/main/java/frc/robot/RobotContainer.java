@@ -14,6 +14,7 @@ import frc.robot.subsystems.ShooterIntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -41,7 +42,7 @@ public class RobotContainer {
   private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
   private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 
-  private final ShooterCommand m_shooterCommand = new ShooterCommand(m_shooterSubsystem);
+  private final ShooterCommand m_shooterCommand = new ShooterCommand(m_shooterIntakeSubsystem);
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
@@ -51,6 +52,8 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private final XboxController m_codriverController = 
+      new XboxController(Constants.OperatorConstants.kCoDriverControllerPort);
 
   public Drivetrain getDrivetrain() { return m_swerve; }
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -76,6 +79,23 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+
+    if(m_codriverController.getXButtonPressed()){
+      m_shooterSubsystem.setVelocity(Constants.OperatorConstants.ShortShootVelocity);
+      m_shooterIntakeSubsystem.setIntakeVelocity(Constants.OperatorConstants.intakeShootVelocity);
+    }else if(m_codriverController.getXButtonReleased()){
+      m_shooterSubsystem.setVelocity(Constants.OperatorConstants.StopShootVelocity);
+      m_shooterIntakeSubsystem.setIntakeVelocity(Constants.OperatorConstants.StopShootVelocity);
+    }
+
+    if(m_codriverController.getRightBumperReleased()){
+      m_bumperIntakeSubsystem.setVelocity(Constants.OperatorConstants.groundIntakeVelocity);
+      m_shooterIntakeSubsystem.setIntakeVelocity(Constants.OperatorConstants.intakeVelocity);
+      m_shooterSubsystem.setVelocity(Constants.OperatorConstants.StopShootVelocity);
+    }else if(m_codriverController.getRightBumperReleased()){
+      m_bumperIntakeSubsystem.setVelocity(Constants.OperatorConstants.StopShootVelocity);
+      m_shooterIntakeSubsystem.setIntakeVelocity(Constants.OperatorConstants.StopShootVelocity);
+    }
   }
 
   /**
