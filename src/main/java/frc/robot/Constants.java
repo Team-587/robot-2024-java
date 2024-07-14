@@ -36,7 +36,6 @@ public final class Constants {
     public static final double LongShootVelocity = 5200.00;
     public static final double AmpShootVelocity = 3500.00;
     public static final double TrapShootVelocity = 900.00;
-    public static final double StopShootVelocity = 0.0;
 
     public static final double intakeVelocity = 0.45;
     public static final double groundIntakeVelocity = 0.55;
