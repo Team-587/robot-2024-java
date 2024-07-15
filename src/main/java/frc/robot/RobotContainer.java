@@ -10,6 +10,7 @@ import frc.robot.commands.BumberIntakeCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.ShortShootCommand;
+import frc.robot.commands.StopShootCommand;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.LightsSubsystem;
 import frc.robot.subsystems.ShooterIntakeSubsystem;
@@ -63,6 +64,11 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
   }
+  //Codriver Bindings
+  Trigger coXTrigger = m_codriverController.x();
+  Trigger coRBTrigger = m_codriverController.rightBumper();
+  //Driver Bindings
+  Trigger ATrigger = m_driverController.a();
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -79,13 +85,14 @@ public class RobotContainer {
         .onTrue(new ExampleCommand(m_exampleSubsystem));
 
 
-    Trigger coXTrigger = m_codriverController.x();
-    Trigger coRBTrigger = m_codriverController.rightBumper();
+    
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-
+    //Codriver Bidnings
     coXTrigger.whileTrue(new ShortShootCommand(m_shooterIntakeSubsystem, m_shooterSubsystem));
+    //DriverBindings
+    ATrigger.onTrue(new StopShootCommand(m_shooterSubsystem));
   }
 
   /**
